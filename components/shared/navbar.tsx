@@ -37,7 +37,7 @@ const Navbar = () => {
             <UserBox />
           ) : (
             <Avatar className="cursor-pointer">
-              <AvatarFallback>J</AvatarFallback>
+              <AvatarFallback>A</AvatarFallback>
             </Avatar>
           )}
         </div>

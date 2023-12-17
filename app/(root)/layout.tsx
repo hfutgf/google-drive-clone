@@ -8,7 +8,11 @@ const AuthLayout = ({ children }: LayoutChildProps) => {
     <div className="relative">
       <Navbar />
       <Sidebar />
-      {children}
+      <main className="w-full min-h-[90vh] relative top-[10vh] pl-72 bg-[#f6f9fc] dark:bg-[#1f1f1f] p-4">
+        <div className="h-[85vh] bg-white dark:bg-black text-white p-8 rounded-md  ml-4">
+          {children}
+        </div>
+      </main>
     </div>
   );
 };

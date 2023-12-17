@@ -6,6 +6,8 @@ import React from "react";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarImage } from "../ui/avatar";
@@ -40,7 +42,19 @@ const UserBox = () => {
                 <AvatarImage src={user?.imageUrl} />
               </Avatar>
             </div>
+            <div className="space-y-1">
+              <p className="text-sm line-clamp-1">{user?.fullName}</p>
+            </div>
           </div>
+          <DropdownMenuSeparator />
+
+          <DropdownMenuItem
+            onClick={() => signOut(() => router.push("/sign-in"))}
+            asChild
+            className="w-full cursor-pointer text-muted-foreground"
+          >
+            <div role="button">Log out</div>
+          </DropdownMenuItem>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
