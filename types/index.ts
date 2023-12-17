@@ -1,5 +1,5 @@
 import React from "react";
 
-export interface ChildProps {
+export interface LayoutChildProps {
   children: React.ReactNode;
 }
