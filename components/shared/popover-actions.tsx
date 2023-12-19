@@ -1,13 +1,68 @@
 "use client";
 
 import { FileUp, Folder, FolderUp } from "lucide-react";
-import React from "react";
+import React, { ElementRef, useRef } from "react";
 import { Separator } from "../ui/separator";
 import { useFolder } from "@/hooks/use-folder";
+import {
+  addDoc,
+  collection,
+  doc,
+  serverTimestamp,
+  updateDoc,
+} from "firebase/firestore";
+import { db, storage } from "@/lib/firebase";
+import { useUser } from "@clerk/nextjs";
+import { getDownloadURL, ref, uploadString } from "firebase/storage";
+import { toast } from "sonner";
 
 interface Props {}
 
 const PopoverActions = ({}: Props) => {
+  const inputRef = useRef<ElementRef<"input">>(null);
+
+  const { user } = useUser();
+
+  const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files) return;
+    const file = files[0];
+    let image = "";
+
+    const reader = new FileReader();
+    if (file) {
+      reader.readAsDataURL(file);
+      reader.onload = (e) => {
+        image = e.target?.result as string;
+      };
+    }
+    console.log(image);
+
+    const promise = addDoc(collection(db, "files"), {
+      name: file.name,
+      type: file.type,
+      size: file.size,
+      uid: user?.id,
+      timestamp: serverTimestamp(),
+      isArhive: false,
+    }).then((docs) => {
+      const refs = ref(storage, `files/${docs.id}`);
+      uploadString(refs, image, "data_url").then(() => {
+        getDownloadURL(refs).then((url) => {
+          updateDoc(doc(db, "files", docs.id), {
+            image: url,
+          });
+        });
+      });
+    });
+
+    toast.promise(promise, {
+      loading: "Loading...",
+      success: "Uploaded!",
+      error: "Error uploding file",
+    });
+  };
+
   const { onOpen } = useFolder();
   return (
     <>
@@ -20,20 +75,38 @@ const PopoverActions = ({}: Props) => {
         <span>New folder</span>
       </div>
       <Separator />
-      <div
-        className="flex items-center hover:bg-secondary transition py-2 px-4 space-x-2 text-sm"
-        role="button"
-      >
-        <FileUp className="w-4 h-4" />
-        <span>New upload</span>
-      </div>
-      <div
-        className="flex items-center hover:bg-secondary transition py-2 px-4 space-x-2 text-sm"
-        role="button"
-      >
-        <FolderUp className="w-4 h-4" />
-        <span>Folder upload</span>
-      </div>
+      <label>
+        <div
+          className="flex items-center hover:bg-secondary transition py-2 px-4 space-x-2 text-sm"
+          role="button"
+        >
+          <FileUp className="w-4 h-4" />
+          <span>New upload</span>
+        </div>
+        <input
+          type="file"
+          className="hidden"
+          accept="image/*"
+          onChange={onChange}
+          ref={inputRef}
+        />
+      </label>
+      <label>
+        <div
+          className="flex items-center hover:bg-secondary transition py-2 px-4 space-x-2 text-sm"
+          role="button"
+        >
+          <FolderUp className="w-4 h-4" />
+          <span>Folder upload</span>
+        </div>
+        <input
+          type="file"
+          className="hidden"
+          accept="image/*"
+          onChange={onChange}
+          ref={inputRef}
+        />
+      </label>
     </>
   );
 };
