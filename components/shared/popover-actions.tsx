@@ -15,6 +15,7 @@ import { db, storage } from "@/lib/firebase";
 import { useUser } from "@clerk/nextjs";
 import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface Props {}
 
@@ -22,6 +23,7 @@ const PopoverActions = ({}: Props) => {
   const inputRef = useRef<ElementRef<"input">>(null);
 
   const { user } = useUser();
+  const router = useRouter();
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -44,14 +46,14 @@ const PopoverActions = ({}: Props) => {
       size: file.size,
       uid: user?.id,
       timestamp: serverTimestamp(),
-      isArhive: false,
+      isArchive: false,
     }).then((docs) => {
       const refs = ref(storage, `files/${docs.id}`);
       uploadString(refs, image, "data_url").then(() => {
         getDownloadURL(refs).then((url) => {
           updateDoc(doc(db, "files", docs.id), {
             image: url,
-          });
+          }).then(() => router.refresh());
         });
       });
     });

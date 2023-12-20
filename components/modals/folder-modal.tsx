@@ -25,10 +25,11 @@ import { addDoc, collection, serverTimestamp } from "firebase/firestore";
 import { useUser } from "@clerk/nextjs";
 import { db } from "@/lib/firebase";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const FolderModal = () => {
   const { isOpen, onClose } = useFolder();
-
+  const router = useRouter();
   const { user } = useUser();
 
   const form = useForm<z.infer<typeof folderSchema>>({
@@ -43,10 +44,11 @@ const FolderModal = () => {
       name: values.name,
       timestamp: serverTimestamp(),
       uid: user?.id,
-      isArhive: false,
+      isArchive: false,
     }).then(() => {
       form.reset();
       onClose();
+      router.refresh();
     });
 
     toast.promise(promise, {
@@ -58,7 +60,6 @@ const FolderModal = () => {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogTrigger>Open</DialogTrigger>
       <DialogContent className="max-w-sm">
         <DialogHeader>
           <DialogTitle>Are you sure absolutely sure?</DialogTitle>
