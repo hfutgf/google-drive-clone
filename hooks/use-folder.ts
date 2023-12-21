@@ -1,6 +1,6 @@
 import { create } from "zustand";
 
-export interface IState {
+interface IState {
   isOpen: boolean;
   onOpen: () => void;
   onClose: () => void;

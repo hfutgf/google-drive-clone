@@ -38,7 +38,6 @@ const PopoverActions = ({}: Props) => {
         image = e.target?.result as string;
       };
     }
-    console.log(image);
 
     const promise = addDoc(collection(db, "files"), {
       name: file.name,

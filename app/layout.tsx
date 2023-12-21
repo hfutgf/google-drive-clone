@@ -12,6 +12,7 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
   title: "Google Drive",
   description: "Practics",
+  icons: "/svg/logo.svg",
 };
 
 export default function RootLayout({ children }: LayoutChildProps) {

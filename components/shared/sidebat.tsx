@@ -1,3 +1,4 @@
+"use client";
 import React from "react";
 import { Button } from "../ui/button";
 import { Clock5, Cloud, Plus, Star, Tablet, Trash } from "lucide-react";
@@ -9,7 +10,7 @@ import PopoverActions from "./popover-actions";
 
 const Sidebar = () => {
   return (
-    <div className="fixed min-h-[90vh] w-72 top-[10vh] z-30 left-0 bg-[#f6f9fc] dark:bg-[#1f1f1f] border-r">
+    <div className="fixed min-h-[90vh] w-72 top-[10vh] z-30 left-0 bg-[#f6f9fc] dark:bg-[#1f1f1f] ">
       <div className="flex flex-col p-3">
         <Popover>
           <PopoverTrigger asChild>
@@ -26,7 +27,7 @@ const Sidebar = () => {
         <div className="flex flex-col space-y-6 mt-8">
           {sidebarLinks.map((link) => (
             <Link href={link.path} key={link.path}>
-              <Items icon={link.icon} label={link.label} />
+              <Items icon={link.icon} label={link.label} path={link.path} />
             </Link>
           ))}
           <div className="flex flex-col space-y-2 mx-4">
