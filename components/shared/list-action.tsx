@@ -10,14 +10,14 @@ import {
 import React from "react";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface Props {
   item: IFolderAndFile;
-  onStartEditing: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onStartEditing?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 const ListAction = ({ item, onStartEditing }: Props) => {
@@ -32,7 +32,7 @@ const ListAction = ({ item, onStartEditing }: Props) => {
     const promise = setDoc(ref, {
       ...item,
       isArchive: true,
-      archivedTime: new Date(),
+      archivedTime: serverTimestamp(),
     }).then(() => refresh());
 
     toast.promise(promise, {

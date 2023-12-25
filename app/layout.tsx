@@ -6,6 +6,8 @@ import { LayoutChildProps } from "@/types";
 import { ThemeProvider } from "@/components/providers/theme-provider";
 import { Toaster } from "sonner";
 import ModalProvider from "@/components/providers/modal-provider";
+import { ErrorBoundary } from "@/components/providers/error-boundry";
+import Error404 from "@/components/shared/Error404";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,7 +31,7 @@ export default function RootLayout({ children }: LayoutChildProps) {
           >
             <Toaster position="top-center" />
             <ModalProvider />
-            {children}
+            <ErrorBoundary fallback={<Error404 />}>{children}</ErrorBoundary>
           </ThemeProvider>
         </body>
       </html>
