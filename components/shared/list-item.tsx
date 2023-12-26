@@ -27,7 +27,7 @@ const ListItem = ({ item }: Props) => {
 
   const inputRef = useRef<ElementRef<"input">>(null);
 
-  const { refresh } = useRouter();
+  const { refresh, push } = useRouter();
 
   const date = new Date(item.timestamp.seconds * 1000);
 
@@ -79,7 +79,10 @@ const ListItem = ({ item }: Props) => {
   };
 
   return (
-    <TableRow className="group cursor-pointer">
+    <TableRow
+      className="group cursor-pointer"
+      onClick={() => !item.size && push(`/document/${item.id}`)}
+    >
       <TableCell className="font-medium">
         {!isEditing ? (
           <div
@@ -137,7 +140,7 @@ const ListItem = ({ item }: Props) => {
         {item.size ? bytConverter(item.size) : <Minus />}
       </TableCell>
       <TableCell className="flex justify-end  items-center space-x-2">
-        <ListAction item={item}  onStartEditing={onStartEditing}/>
+        <ListAction item={item} onStartEditing={onStartEditing} />
       </TableCell>
     </TableRow>
   );

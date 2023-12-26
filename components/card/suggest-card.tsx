@@ -9,7 +9,7 @@ import { useUser } from "@clerk/nextjs";
 import ListAction from "../shared/list-action";
 import { toast } from "sonner";
 import { doc, setDoc } from "firebase/firestore";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { db } from "@/lib/firebase";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
@@ -28,7 +28,8 @@ const SuggestCard = ({ item }: Props) => {
 
   const { refresh } = useRouter();
 
-  const date = new Date(item.timestamp.seconds * 1000);
+  const { documentId } = useParams();
+  const folderId = documentId as string;
 
   const onStartEditing = (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
@@ -41,7 +42,9 @@ const SuggestCard = ({ item }: Props) => {
 
   const onSave = () => {
     const type = item.size ? "files" : "folders";
-    const ref = doc(db, type, item.id);
+    const ref = documentId
+      ? doc(db, "folders", folderId, "files", item.id)
+      : doc(db, type, item.id);
     let promise;
     if (type === "files") {
       const t = item.name.split(".")[1];

@@ -12,7 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Separator } from "../ui/separator";
 import { doc, serverTimestamp, setDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface Props {
@@ -22,12 +22,16 @@ interface Props {
 
 const ListAction = ({ item, onStartEditing }: Props) => {
   const { refresh } = useRouter();
+  const { documentId } = useParams();
   const type = item.size ? "files" : "folders";
+  const folderId = documentId as string;
+
+  const ref = documentId
+    ? doc(db, "folders", folderId, "files", item.id)
+    : doc(db, type, item.id);
 
   const onDelete = (evt: React.MouseEvent<HTMLDivElement>) => {
     evt.stopPropagation();
-
-    const ref = doc(db, type, item.id);
 
     const promise = setDoc(ref, {
       ...item,
@@ -45,7 +49,6 @@ const ListAction = ({ item, onStartEditing }: Props) => {
   const onStar = (evt: React.MouseEvent<HTMLDivElement>) => {
     evt.stopPropagation();
 
-    const ref = doc(db, type, item.id);
     const promise = setDoc(ref, {
       ...item,
       isStar: item.isStar ? false : true,

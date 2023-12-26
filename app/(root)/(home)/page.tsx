@@ -5,24 +5,24 @@ import { auth } from "@clerk/nextjs";
 import { collection, getDocs, query, where } from "firebase/firestore";
 import React from "react";
 
+const getData = async (uid: string, type: "folders" | "files") => {
+  let data: any = [];
+  const q = query(
+    collection(db, type),
+    where("uid", "==", uid),
+    where("isArchive", "==", false)
+  );
+
+  const querySnapshot = await getDocs(q);
+
+  querySnapshot.forEach((doc) => {
+    data.push({ ...doc.data(), id: doc.id });
+  });
+
+  return data;
+};
+
 const HomePage = async () => {
-  const getData = async (uid: string, type: "folders" | "files") => {
-    let data: any = [];
-    const q = query(
-      collection(db, type),
-      where("uid", "==", uid),
-      where("isArchive", "==", false)
-    );
-
-    const querySnapshot = await getDocs(q);
-
-    querySnapshot.forEach((doc) => {
-      data.push({ ...doc.data(), id: doc.id });
-    });
-
-    return data;
-  };
-
   const { userId } = auth();
 
   const folders = await getData(userId as string, "folders");
