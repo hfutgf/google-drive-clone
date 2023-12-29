@@ -43,7 +43,7 @@ const Page = async ({}) => {
   return (
     <>
       <Header label="Storage" />
-      <Storage totalSize={totalSize} />
+      <Storage totalSize={JSON.parse(JSON.stringify(totalSize))} />
 
       <Table className="mt-4 dark:text-white text-black">
         <TableHeader>
@@ -57,7 +57,7 @@ const Page = async ({}) => {
         </TableHeader>
         <TableBody>
           {files.map((file: IFolderAndFile) => (
-            <ListItem key={file.id} item={file} />
+            <ListItem key={file.id} item={JSON.parse(JSON.stringify(file))} />
           ))}
         </TableBody>
       </Table>

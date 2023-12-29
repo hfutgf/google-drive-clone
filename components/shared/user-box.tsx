@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
 import { Avatar, AvatarImage } from "../ui/avatar";
+import Link from "next/link";
 
 const UserBox = () => {
   const { user } = useUser();
@@ -47,14 +48,24 @@ const UserBox = () => {
             </div>
           </div>
           <DropdownMenuSeparator />
+          <div>
+            <Link href={"/settings"}>
+              <DropdownMenuItem
+                asChild
+                className="w-full cursor-pointer text-muted-foreground"
+              >
+                <div role="button">Account</div>
+              </DropdownMenuItem>
+            </Link>
 
-          <DropdownMenuItem
-            onClick={() => signOut(() => router.push("/sign-in"))}
-            asChild
-            className="w-full cursor-pointer text-muted-foreground"
-          >
-            <div role="button">Log out</div>
-          </DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => signOut(() => router.push("/sign-in"))}
+              asChild
+              className="w-full cursor-pointer text-muted-foreground"
+            >
+              <div role="button">Log out</div>
+            </DropdownMenuItem>
+          </div>
         </div>
       </DropdownMenuContent>
     </DropdownMenu>

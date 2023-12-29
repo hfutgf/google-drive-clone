@@ -17,15 +17,15 @@ import { getDownloadURL, ref, uploadString } from "firebase/storage";
 import { toast } from "sonner";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
+import { useSubscription } from "@/hooks/use-subscription";
 
-interface Props {}
-
-const PopoverActions = ({}: Props) => {
+const PopoverActions = () => {
   const inputRef = useRef<ElementRef<"input">>(null);
 
   const { user } = useUser();
   const router = useRouter();
   const { documentId } = useParams();
+  const { setTotalStorage, totalStorage } = useSubscription();
 
   const onChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -54,7 +54,20 @@ const PopoverActions = ({}: Props) => {
       uid: user?.id,
       timestamp: serverTimestamp(),
       isArchive: false,
+      isDocument: false,
     }).then((docs) => {
+      if (documentId) {
+        addDoc(collection(db, "files"), {
+          name: file.name,
+          type: file.type,
+          size: file.size,
+          uid: user?.id,
+          timestamp: serverTimestamp(),
+          isArchive: false,
+          isDocument: true,
+        });
+      }
+
       const refs = documentId
         ? ref(storage, `files/${folderId}/${docs.id}`)
         : ref(storage, `files/${docs.id}`);
@@ -65,7 +78,10 @@ const PopoverActions = ({}: Props) => {
             : doc(db, "files", docs.id);
           updateDoc(docRefs, {
             image: url,
-          }).then(() => router.refresh());
+          }).then(() => {
+            setTotalStorage(totalStorage + file.size);
+            router.refresh();
+          });
         });
       });
     });

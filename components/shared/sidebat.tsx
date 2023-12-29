@@ -1,16 +1,23 @@
 "use client";
-import React from "react";
+import React, { useEffect } from "react";
 import { Button } from "../ui/button";
-import { Clock5, Cloud, Plus, Star, Tablet, Trash } from "lucide-react";
+import { Clock5, Cloud, Loader, Plus, Star, Tablet, Trash } from "lucide-react";
 import Link from "next/link";
 import Items from "./item";
 import { Progress } from "../ui/progress";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import PopoverActions from "./popover-actions";
 import { usePlan } from "@/hooks/use-plan";
+import { useSubscription } from "@/hooks/use-subscription";
+import { bytConverter } from "@/lib/utils";
 
 const Sidebar = () => {
   const { onOpen } = usePlan();
+  const { isLoading, subscription, totalStorage } = useSubscription();
+
+  const storageVal =
+    subscription === "Basic" ? 1500 * 1024 * 1024 : 15000 * 1024 * 1024;
+
   return (
     <div className="fixed min-h-[90vh] w-72 top-[10vh] z-30 left-0 bg-[#f6f9fc] dark:bg-[#1f1f1f] ">
       <div className="flex flex-col p-3">
@@ -33,8 +40,22 @@ const Sidebar = () => {
             </Link>
           ))}
           <div className="flex flex-col space-y-2 mx-4">
-            <Progress className="h-2" value={30} />
-            <span>20 MB of 1.0 GB used</span>
+            {isLoading ? (
+              <div className="w-full flex justify-center">
+                <Loader className="animate-spin text-muted-foreground w-4 h-4" />
+              </div>
+            ) : (
+              <>
+                <Progress
+                  className="h-2"
+                  value={(totalStorage * 100) / storageVal}
+                />
+                <span>
+                  {bytConverter(totalStorage, 1)} of{" "}
+                  {subscription === "Basic" ? "1.5 GB" : "15 GB"} used
+                </span>
+              </>
+            )}
 
             <Button
               onClick={onOpen}
